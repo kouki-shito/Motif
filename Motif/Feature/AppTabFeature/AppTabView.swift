@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  AppTabView.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/06.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct AppTabView: View {
     var body: some View {
         VStack {
             Image(systemName: "globe")
@@ -20,5 +20,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    AppTabView()
 }
