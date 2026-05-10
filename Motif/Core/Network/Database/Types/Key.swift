@@ -64,7 +64,7 @@ enum Key: Int, QueryBindable, CaseIterable {
         }
     }
     
-    var shorName: String {
+    var shortName: String {
         switch self {
         case .c:
             "C"

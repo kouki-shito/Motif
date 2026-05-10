@@ -1,5 +1,5 @@
 //
-//  ProjectTabView.swift
+//  LibraryTabView.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/06.
@@ -33,7 +33,7 @@ struct LibraryTabView: View {
                                             .foregroundStyle(.gray)
                                     }
                                 }
-                                Text(project.createdAt.dateToString(format: "yyyy/MM/dd"))
+                                Text(project.createdAt.dateToString(formatter: Date.defaultFormatter))
                                     .font(.system(size: 16))
                                     .foregroundStyle(.secondary)
                             }

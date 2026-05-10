@@ -8,10 +8,15 @@
 import Foundation
 
 extension Date {
-    func dateToString(format: String) -> String {
+    
+    static let defaultFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.dateFormat = format
+        formatter.dateFormat = "yyyy/MM/dd"
+        return formatter
+    }()
+    
+    func dateToString(formatter: DateFormatter) -> String {
         return formatter.string(from: self)
     }
 }
