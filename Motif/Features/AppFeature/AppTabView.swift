@@ -11,7 +11,7 @@ struct AppTabView: View {
     var body: some View {
         TabView {
             Tab("ライブラリ", systemImage: "tray.fill") {
-                LibraryTabView()
+                ProjectListTabView()
             }
         }
     }

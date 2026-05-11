@@ -1,5 +1,5 @@
 //
-//  LibraryTabView.swift
+//  ProjectListTabView.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/06.
@@ -7,12 +7,9 @@
 
 import SwiftUI
 
-struct LibraryTabView: View {
+struct ProjectListTabView: View {
     let project: [Project] = [
-        Project(id: UUID(), createdAt: Date(), title: "青春", description: "a", bpm: 170, key: .b, genre_id: UUID()),
-        Project(id: UUID(), createdAt: Date(), title: "自然", description: "b", bpm: 170, key: .b, genre_id: UUID()),
-        Project(id: UUID(), createdAt: Date(), title: "パレード", description: "c", key: .b, genre_id: UUID()),
-        Project(id: UUID(), createdAt: Date(), title: "冒険", description: "d", bpm: 170, key: .b, genre_id: UUID()),
+        Project(id: UUID(), createdAt: Date(), title: "青春", description: "a", lyric: "", bpm: 170, key: .b, genre_id: UUID())
     ]
     var body: some View {
         NavigationStack {
@@ -112,6 +109,6 @@ struct LibraryTabView: View {
 
 #Preview {
     NavigationStack {
-        LibraryTabView()
+        ProjectListTabView()
     }
 }
