@@ -8,8 +8,8 @@
 import Foundation
 import SQLiteData
 
-@Table("Genres")
+@Table("genres")
 struct Genre: Equatable, Identifiable, Sendable, Hashable {
-    let id: UUID
+    let id: Int
     let name: String
 }

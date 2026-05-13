@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
+import SQLiteData
 
 struct ProjectListTabView: View {
-    let project: [Project] = [
-        Project(id: UUID(), createdAt: Date(), title: "青春", description: "a", lyric: "", bpm: 170, key: .b, genre_id: UUID())
-    ]
+    
+    @Bindable var store: StoreOf<ProjectListReducer>
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 List {
-                    ForEach(project, id: \.id) { project in
+                    ForEach(store.projects, id: \.id) { project in
                         VStack(alignment: .leading, spacing: 8) {
                             VStack(alignment: .leading) {
                                 HStack {
@@ -35,8 +37,8 @@ struct ProjectListTabView: View {
                                     .foregroundStyle(.secondary)
                             }
                             HStack(spacing: 8) {
-                                if let _ = project.genre_id {
-                                    tagItem(text: "Lofi", style: .selection )
+                                if let name = project.genre_name {
+                                    tagItem(text: name, style: .selection )
                                 }
                                 if let bpm = project.bpm {
                                     tagItem(text: "\(bpm) BPM", iconName: "timer")
@@ -50,7 +52,7 @@ struct ProjectListTabView: View {
                 }
                 .listStyle(.plain)
                 Button {
-                    
+                    store.send(.view(.addProjectButtonTapped))
                 } label: {
                     ZStack(alignment: .center) {
                         Circle()
@@ -83,6 +85,10 @@ struct ProjectListTabView: View {
                     }
                 }
             }
+            .sheet(item: $store.scope(state: \.$projectEditSheetState, action: \.projectEditSheetAction), content: { store in
+                ProjectEditSheetView(store: store)
+                    .presentationBackground(.white)
+            })
         }
     }
     
@@ -108,7 +114,13 @@ struct ProjectListTabView: View {
 }
 
 #Preview {
+    let _ = prepareDependencies {
+        let db = try! appDatabase()
+        $0.defaultDatabase = db
+    }
     NavigationStack {
-        ProjectListTabView()
+        ProjectListTabView(store: Store(initialState: ProjectListReducer.State(), reducer: {
+            ProjectListReducer()
+        }))
     }
 }

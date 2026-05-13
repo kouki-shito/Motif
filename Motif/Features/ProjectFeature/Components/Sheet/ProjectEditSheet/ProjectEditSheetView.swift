@@ -7,6 +7,7 @@
 
 import SwiftUI
 import ComposableArchitecture
+import SQLiteData
 
 struct ProjectEditSheetView: View {
     
@@ -20,7 +21,7 @@ struct ProjectEditSheetView: View {
                     TextField("タイトル", text: $store.title)
                 }
                 Section("楽曲情報") {
-                    Picker("ジャンル", selection: $store.selectingGenreID) {
+                    Picker("ジャンル", selection: $store.genreID) {
                         Text("ジャンルを選択").tag(Genre.ID?(nil))
                         ForEach(store.genres, id: \.id) { genre in
                             Text(genre.name).tag(genre.id)
@@ -31,7 +32,7 @@ struct ProjectEditSheetView: View {
                             Text("追加...")
                         }
                     }
-                    Picker("キー", selection: $store.selectingKey) {
+                    Picker("キー", selection: $store.key) {
                         Text("キーを選択").tag(Key?(nil))
                         Section("長調") {
                             ForEach(store.majorKeyCases, id: \.self) { key in
@@ -53,11 +54,11 @@ struct ProjectEditSheetView: View {
                     }
                 }
                 Section("メモ") {
-                    PlaceholderTextEditor(text: $store.descriptionText, placeholder: "詳細情報を記入...")
+                    PlaceholderTextEditor(text: $store.description, placeholder: "詳細情報を記入...")
                         .frame(height: 160)
                 }
                 Section("歌詞") {
-                    PlaceholderTextEditor(text: $store.lyricText, placeholder: "歌詞を記入...")
+                    PlaceholderTextEditor(text: $store.lyric, placeholder: "歌詞を記入...")
                         .frame(height: 160)
                 }
             }
@@ -90,12 +91,21 @@ struct ProjectEditSheetView: View {
                     .disabled(!store.isConfirmButtonActive)
                 }
             }
+            .onChange(of: store.isDismiss) { _, bool in
+                if bool {
+                   dismiss()
+                }
+            }
         }
     }
 }
 
 #Preview {
     NavigationStack {
+        let _ = prepareDependencies {
+            let db = try! appDatabase()
+            $0.defaultDatabase = db
+        }
         ProjectEditSheetView(store: Store(initialState: ProjectEditSheetReducer.State(), reducer: {
             ProjectEditSheetReducer()
         }))
