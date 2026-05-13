@@ -116,4 +116,7 @@ enum Key: Int, QueryBindable, CaseIterable {
             "Bm"
         }
     }
+    
+    static let majorAllCases: [Key] = Array(Key.allCases[0...11])
+    static let minorAllCases: [Key] = Array(Key.allCases[12...])
 }

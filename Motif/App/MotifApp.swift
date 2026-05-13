@@ -6,9 +6,16 @@
 //
 
 import SwiftUI
+import SQLiteData
 
 @main
 struct MotifApp: App {
+    init() {
+        prepareDependencies {
+            let db = try! appDatabase()
+            $0.defaultDatabase = db
+        }
+    }
     var body: some Scene {
         WindowGroup {
             AppTabView()

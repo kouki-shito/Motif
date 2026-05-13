@@ -1,24 +1,23 @@
 //
-//  LibraryTabView.swift
+//  ProjectListTabView.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/06.
 //
 
 import SwiftUI
+import ComposableArchitecture
+import SQLiteData
 
-struct LibraryTabView: View {
-    let project: [Project] = [
-        Project(id: UUID(), createdAt: Date(), title: "青春", description: "a", bpm: 170, key: .b, genre_id: UUID()),
-        Project(id: UUID(), createdAt: Date(), title: "自然", description: "b", bpm: 170, key: .b, genre_id: UUID()),
-        Project(id: UUID(), createdAt: Date(), title: "パレード", description: "c", key: .b, genre_id: UUID()),
-        Project(id: UUID(), createdAt: Date(), title: "冒険", description: "d", bpm: 170, key: .b, genre_id: UUID()),
-    ]
+struct ProjectListTabView: View {
+    
+    @Bindable var store: StoreOf<ProjectListReducer>
+    
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 List {
-                    ForEach(project, id: \.id) { project in
+                    ForEach(store.projects, id: \.id) { project in
                         VStack(alignment: .leading, spacing: 8) {
                             VStack(alignment: .leading) {
                                 HStack {
@@ -38,8 +37,8 @@ struct LibraryTabView: View {
                                     .foregroundStyle(.secondary)
                             }
                             HStack(spacing: 8) {
-                                if let _ = project.genre_id {
-                                    tagItem(text: "Lofi", style: .selection )
+                                if let name = project.genre_name {
+                                    tagItem(text: name, style: .selection )
                                 }
                                 if let bpm = project.bpm {
                                     tagItem(text: "\(bpm) BPM", iconName: "timer")
@@ -53,7 +52,7 @@ struct LibraryTabView: View {
                 }
                 .listStyle(.plain)
                 Button {
-                    
+                    store.send(.view(.addProjectButtonTapped))
                 } label: {
                     ZStack(alignment: .center) {
                         Circle()
@@ -86,6 +85,10 @@ struct LibraryTabView: View {
                     }
                 }
             }
+            .sheet(item: $store.scope(state: \.$projectEditSheetState, action: \.projectEditSheetAction), content: { store in
+                ProjectEditSheetView(store: store)
+                    .presentationBackground(.white)
+            })
         }
     }
     
@@ -111,7 +114,13 @@ struct LibraryTabView: View {
 }
 
 #Preview {
+    let _ = prepareDependencies {
+        let db = try! appDatabase()
+        $0.defaultDatabase = db
+    }
     NavigationStack {
-        LibraryTabView()
+        ProjectListTabView(store: Store(initialState: ProjectListReducer.State(), reducer: {
+            ProjectListReducer()
+        }))
     }
 }

@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct AppTabView: View {
     var body: some View {
         TabView {
             Tab("ライブラリ", systemImage: "tray.fill") {
-                LibraryTabView()
+                ProjectListTabView(store: Store(initialState: ProjectListReducer.State(), reducer: {
+                    ProjectListReducer()
+                }))
             }
         }
     }
