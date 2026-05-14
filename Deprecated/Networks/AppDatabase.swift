@@ -32,14 +32,53 @@ func appDatabase() throws -> any DatabaseWriter {
     migrator.registerMigration("Create tables") { db in
         try #sql(
         """
+        CREATE TABLE "projects" (
+            "id"    TEXT NOT NULL,
+            "createdAt"    TEXT NOT NULL,
+            "title"    TEXT NOT NULL CHECK(TRIM("title") <> ''),
+            "description"    TEXT NOT NULL DEFAULT '',
+            "bpm"    INTEGER CHECK("bpm" > 0),
+            "key"    INTEGER,
+            "genre_id"    INTEGER,
+            PRIMARY KEY("id"),
+            FOREIGN KEY("genre_id") REFERENCES "genres"("id")
+        )STRICT
+        """
+        ).execute(db)
+        try #sql(
+        """
         CREATE TABLE "records" (
             "id"    TEXT NOT NULL,
             "createdAt"    TEXT NOT NULL,
             "name" TEXT NOT NULL,
-            PRIMARY KEY("id")
+            "project_id" TEXT NOT NULL,
+            PRIMARY KEY("id"),
+            FOREIGN KEY("project_id") REFERENCES "projects"("id")
         )STRICT        
         """
         ).execute(db)
+        try #sql(
+        """
+        CREATE TABLE "genres" ( 
+            "id"    INTEGER,
+            "name"    TEXT NOT NULL UNIQUE,
+            PRIMARY KEY("id" AUTOINCREMENT)
+        ) STRICT
+        """
+        ).execute(db)
+        try #sql(
+        """
+        INSERT INTO genres
+            (name)
+        VALUES
+            ('Electro'),
+            ('Jazz'),
+            ('J-POP'),
+            ('Rock'),
+            ('Anime');
+        """
+        ).execute(db)
+        
     }
     try migrator.migrate(database)
     return database

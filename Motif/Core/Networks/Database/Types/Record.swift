@@ -13,12 +13,10 @@ struct Record: Equatable, Identifiable, Sendable, Hashable {
     let id: UUID
     let createdAt: Date
     let name: String
-    let project_id: Project.ID
     
-    init(id: UUID = UUID(), createdAt: Date = Date(), name: String, project_id: Project.ID) {
+    init(id: UUID = UUID(), createdAt: Date = Date(), name: String) {
         self.id = id
         self.createdAt = createdAt
         self.name = name
-        self.project_id = project_id
     }
 }

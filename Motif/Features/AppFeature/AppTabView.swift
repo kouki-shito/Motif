@@ -10,13 +10,11 @@ import ComposableArchitecture
 
 struct AppTabView: View {
     var body: some View {
-        TabView {
-            Tab("ライブラリ", systemImage: "tray.fill") {
-                ProjectListTabView(store: Store(initialState: ProjectListReducer.State(), reducer: {
-                    ProjectListReducer()
-                }))
-            }
-        }
+//        TabView {
+//            Tab("ライブラリ", systemImage: "tray.fill") {
+//
+//            }
+//        }
     }
 }
 
