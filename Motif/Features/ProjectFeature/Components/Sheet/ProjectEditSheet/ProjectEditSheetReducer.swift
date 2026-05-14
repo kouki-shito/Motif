@@ -17,7 +17,6 @@ struct ProjectEditSheetReducer {
         let update_id: UUID?
         var title: String
         var description: String
-        var lyric: String
         var bpm: Int?
         var key: Key?
         var genreID: Genre.ID?
@@ -34,7 +33,6 @@ struct ProjectEditSheetReducer {
                 self.update_id = project.id
                 self.title = project.title
                 self.description = project.description
-                self.lyric = project.lyric
                 self.bpm = project.bpm
                 self.key = project.key
                 self.genreID = project.genre_id
@@ -42,7 +40,6 @@ struct ProjectEditSheetReducer {
                 self.update_id = nil
                 self.title = ""
                 self.description = ""
-                self.lyric = ""
             }
         }
     }
@@ -73,7 +70,6 @@ struct ProjectEditSheetReducer {
                             id: id,
                             title: state.title,
                             description: state.description,
-                            lyric: state.lyric,
                             bpm: state.bpm,
                             key: state.key,
                             genre_id: state.genreID
@@ -90,7 +86,6 @@ struct ProjectEditSheetReducer {
                         let project = Project(
                             title: state.title,
                             description: state.description,
-                            lyric: state.lyric,
                             bpm: state.bpm,
                             key: state.key,
                             genre_id: state.genreID
@@ -105,6 +100,7 @@ struct ProjectEditSheetReducer {
                         }
                     }
                 case .addGenreButtonTapped:
+                    //TODO
                     return .none
                 }
             case .internal(let action):

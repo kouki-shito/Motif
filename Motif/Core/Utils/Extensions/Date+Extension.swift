@@ -9,14 +9,16 @@ import Foundation
 
 extension Date {
     
-    static let defaultFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.dateFormat = "yyyy/MM/dd"
-        return formatter
-    }()
-    
     func dateToString(formatter: DateFormatter) -> String {
         return formatter.string(from: self)
     }
+}
+
+extension DateFormatter {
+    static let defaultFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "yyyy年MM月dd日"
+        return formatter
+    }()
 }

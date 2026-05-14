@@ -57,10 +57,6 @@ struct ProjectEditSheetView: View {
                     PlaceholderTextEditor(text: $store.description, placeholder: "詳細情報を記入...")
                         .frame(height: 160)
                 }
-                Section("歌詞") {
-                    PlaceholderTextEditor(text: $store.lyric, placeholder: "歌詞を記入...")
-                        .frame(height: 160)
-                }
             }
             .navigationTitle("プロジェクト設定")
             .navigationBarTitleDisplayMode(.inline)

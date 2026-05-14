@@ -14,7 +14,6 @@ struct ProjectWithGenre: Equatable {
     let createdAt: Date
     let title: String
     let description: String
-    let lyric: String
     let bpm: Int?
     let key: Key?
     let genre_name: String?

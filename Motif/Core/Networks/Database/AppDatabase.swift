@@ -37,7 +37,6 @@ func appDatabase() throws -> any DatabaseWriter {
             "createdAt"    TEXT NOT NULL,
             "title"    TEXT NOT NULL CHECK(TRIM("title") <> ''),
             "description"    TEXT NOT NULL DEFAULT '',
-            "lyric"    TEXT NOT NULL DEFAULT "",
             "bpm"    INTEGER CHECK("bpm" > 0),
             "key"    INTEGER,
             "genre_id"    INTEGER,
@@ -48,7 +47,19 @@ func appDatabase() throws -> any DatabaseWriter {
         ).execute(db)
         try #sql(
         """
-        CREATE TABLE "genres" (
+        CREATE TABLE "records" (
+            "id"    TEXT NOT NULL,
+            "createdAt"    TEXT NOT NULL,
+            "name" TEXT NOT NULL,
+            "project_id" TEXT NOT NULL,
+            PRIMARY KEY("id"),
+            FOREIGN KEY("project_id") REFERENCES "projects"("id")
+        )STRICT        
+        """
+        ).execute(db)
+        try #sql(
+        """
+        CREATE TABLE "genres" ( 
             "id"    INTEGER,
             "name"    TEXT NOT NULL UNIQUE,
             PRIMARY KEY("id" AUTOINCREMENT)

@@ -11,7 +11,6 @@ struct UpdatedProject: Equatable, Identifiable, Sendable, Hashable {
     let id: UUID
     var title: String
     var description: String
-    var lyric: String
     var bpm: Int?
     var key: Key?
     var genre_id: Genre.ID?

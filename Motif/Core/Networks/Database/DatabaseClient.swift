@@ -36,7 +36,6 @@ extension DatabaseClient: DependencyKey {
                 try Project.update {
                     $0.title = project.title
                     $0.description = project.description
-                    $0.lyric = project.lyric
                     $0.bpm = project.bpm
                     $0.key = project.key
                     $0.genre_id = project.genre_id

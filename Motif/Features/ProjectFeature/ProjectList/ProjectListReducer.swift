@@ -26,7 +26,6 @@ struct ProjectListReducer {
                         createdAt: $0.createdAt,
                         title: $0.title,
                         description: $0.description,
-                        lyric: $0.lyric,
                         bpm: $0.bpm,
                         key: $0.key,
                         genre_name: $1.name
