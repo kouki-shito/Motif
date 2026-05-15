@@ -75,25 +75,6 @@ struct RecordListView: View {
     }
     
     @ViewBuilder
-    func searchField() -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.secondary)
-            
-            Text("検索")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(.secondary.opacity(0.7))
-            
-            Spacer()
-        }
-        .padding(.horizontal, 14)
-        .frame(height: 38)
-        .background(.white)
-        .clipShape(RoundedRectangle(cornerRadius: 10))
-    }
-    
-    @ViewBuilder
     func tagFilter() -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {

@@ -18,7 +18,7 @@ struct MotifApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            AppTabView()
+            RecordListView()
         }
     }
 }
