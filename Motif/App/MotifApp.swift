@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SQLiteData
+import ComposableArchitecture
 
 @main
 struct MotifApp: App {
@@ -18,7 +19,9 @@ struct MotifApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            AppTabView()
+            RecordListView(store: Store(initialState: RecordListReducer.State(), reducer: {
+                RecordListReducer()
+            }))
         }
     }
 }

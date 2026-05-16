@@ -33,6 +33,18 @@
 		1E087B902FAB5D1000FE250A /* Motif.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Motif.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E087B9D2FAB5D1200FE250A /* MotifTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotifTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1E087BA72FAB5D1200FE250A /* MotifUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MotifUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		1E93FFBF2FB5ED1400ED778D /* ProjectEditSheetReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditSheetReducer.swift; sourceTree = "<group>"; };
+		1E93FFC02FB5ED1400ED778D /* ProjectEditSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectEditSheetView.swift; sourceTree = "<group>"; };
+		1E93FFC42FB5ED1400ED778D /* ProjectDetailReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailReducer.swift; sourceTree = "<group>"; };
+		1E93FFC52FB5ED1400ED778D /* ProjectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectDetailView.swift; sourceTree = "<group>"; };
+		1E93FFC72FB5ED1400ED778D /* ProjectWithGenre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectWithGenre.swift; sourceTree = "<group>"; };
+		1E93FFC92FB5ED1400ED778D /* ProjectListReducer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListReducer.swift; sourceTree = "<group>"; };
+		1E93FFCA2FB5ED1400ED778D /* ProjectListTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListTabView.swift; sourceTree = "<group>"; };
+		1E93FFCE2FB5ED1400ED778D /* AppDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDatabase.swift; sourceTree = "<group>"; };
+		1E93FFCF2FB5ED1400ED778D /* DatabaseClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseClient.swift; sourceTree = "<group>"; };
+		1E93FFD02FB5ED1400ED778D /* Genre.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Genre.swift; sourceTree = "<group>"; };
+		1E93FFD12FB5ED1400ED778D /* Project.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Project.swift; sourceTree = "<group>"; };
+		1E93FFD22FB5ED1400ED778D /* UpdatedProject.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdatedProject.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -49,6 +61,11 @@
 		1E087BAA2FAB5D1200FE250A /* MotifUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = MotifUITests;
+			sourceTree = "<group>";
+		};
+		1E88A2432FB5EA1400E2B9A2 /* Deleted */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Deleted;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -84,6 +101,7 @@
 		1E087B872FAB5D1000FE250A = {
 			isa = PBXGroup;
 			children = (
+				1E93FFD42FB5ED1400ED778D /* Deprecated */,
 				1E087B922FAB5D1000FE250A /* Motif */,
 				1E087BA02FAB5D1200FE250A /* MotifTests */,
 				1E087BAA2FAB5D1200FE250A /* MotifUITests */,
@@ -97,8 +115,100 @@
 				1E087B902FAB5D1000FE250A /* Motif.app */,
 				1E087B9D2FAB5D1200FE250A /* MotifTests.xctest */,
 				1E087BA72FAB5D1200FE250A /* MotifUITests.xctest */,
+				1E88A2432FB5EA1400E2B9A2 /* Deleted */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		1E93FFC12FB5ED1400ED778D /* ProjectEditSheet */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFBF2FB5ED1400ED778D /* ProjectEditSheetReducer.swift */,
+				1E93FFC02FB5ED1400ED778D /* ProjectEditSheetView.swift */,
+			);
+			path = ProjectEditSheet;
+			sourceTree = "<group>";
+		};
+		1E93FFC22FB5ED1400ED778D /* Sheet */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFC12FB5ED1400ED778D /* ProjectEditSheet */,
+			);
+			path = Sheet;
+			sourceTree = "<group>";
+		};
+		1E93FFC32FB5ED1400ED778D /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFC22FB5ED1400ED778D /* Sheet */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		1E93FFC62FB5ED1400ED778D /* ProjectDetail */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFC42FB5ED1400ED778D /* ProjectDetailReducer.swift */,
+				1E93FFC52FB5ED1400ED778D /* ProjectDetailView.swift */,
+			);
+			path = ProjectDetail;
+			sourceTree = "<group>";
+		};
+		1E93FFC82FB5ED1400ED778D /* Types */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFC72FB5ED1400ED778D /* ProjectWithGenre.swift */,
+			);
+			path = Types;
+			sourceTree = "<group>";
+		};
+		1E93FFCB2FB5ED1400ED778D /* ProjectList */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFC82FB5ED1400ED778D /* Types */,
+				1E93FFC92FB5ED1400ED778D /* ProjectListReducer.swift */,
+				1E93FFCA2FB5ED1400ED778D /* ProjectListTabView.swift */,
+			);
+			path = ProjectList;
+			sourceTree = "<group>";
+		};
+		1E93FFCC2FB5ED1400ED778D /* ProjectFeature */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFC32FB5ED1400ED778D /* Components */,
+				1E93FFC62FB5ED1400ED778D /* ProjectDetail */,
+				1E93FFCB2FB5ED1400ED778D /* ProjectList */,
+			);
+			path = ProjectFeature;
+			sourceTree = "<group>";
+		};
+		1E93FFCD2FB5ED1400ED778D /* Feature */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFCC2FB5ED1400ED778D /* ProjectFeature */,
+			);
+			path = Feature;
+			sourceTree = "<group>";
+		};
+		1E93FFD32FB5ED1400ED778D /* Networks */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFCE2FB5ED1400ED778D /* AppDatabase.swift */,
+				1E93FFCF2FB5ED1400ED778D /* DatabaseClient.swift */,
+				1E93FFD02FB5ED1400ED778D /* Genre.swift */,
+				1E93FFD12FB5ED1400ED778D /* Project.swift */,
+				1E93FFD22FB5ED1400ED778D /* UpdatedProject.swift */,
+			);
+			path = Networks;
+			sourceTree = "<group>";
+		};
+		1E93FFD42FB5ED1400ED778D /* Deprecated */ = {
+			isa = PBXGroup;
+			children = (
+				1E93FFCD2FB5ED1400ED778D /* Feature */,
+				1E93FFD32FB5ED1400ED778D /* Networks */,
+			);
+			path = Deprecated;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -118,6 +228,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				1E087B922FAB5D1000FE250A /* Motif */,
+				1E88A2432FB5EA1400E2B9A2 /* Deleted */,
 			);
 			name = Motif;
 			packageProductDependencies = (
