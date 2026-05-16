@@ -11,6 +11,7 @@ import ComposableArchitecture
 
 @main
 struct MotifApp: App {
+    private let store = Store(initialState: RecordListReducer.State(), reducer: { RecordListReducer() })
     init() {
         prepareDependencies {
             let db = try! appDatabase()
@@ -19,9 +20,7 @@ struct MotifApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            RecordListView(store: Store(initialState: RecordListReducer.State(), reducer: {
-                RecordListReducer()
-            }))
+            RecordListView(store: store)
         }
     }
 }

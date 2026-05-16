@@ -38,7 +38,6 @@ struct RecordListView: View {
                             .foregroundStyle(.red)
                     }
                 }
-                
             }
         }
     }
