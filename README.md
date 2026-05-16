@@ -48,13 +48,13 @@
 Motif
 ├── App
 ├── Core
-│   ├── Components
-│   ├── Networks
-│   ├── Domains
+│   ├── Component
+│   ├── Data
+│   ├── Domain
 │   ├── Resource
-│   └── Utils
+│   └── Util
 │       └── Extensions
-└── Features
+└── Feature
 ```
 
 ## 現状の課題
