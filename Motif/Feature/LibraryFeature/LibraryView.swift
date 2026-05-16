@@ -1,5 +1,5 @@
 //
-//  RecordListView.swift
+//  LibraryView.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/14.
@@ -9,9 +9,9 @@ import SwiftUI
 import ComposableArchitecture
 import SQLiteData
 
-struct RecordListView: View {
+struct LibraryView: View {
     
-    @Bindable var store: StoreOf<RecordListReducer>
+    @Bindable var store: StoreOf<LibraryReducer>
 
     var body: some View {
         NavigationStack {
@@ -201,8 +201,8 @@ private extension Color {
         $0.defaultDatabase = db
     }
     NavigationStack {
-        RecordListView(store: Store(initialState: RecordListReducer.State(), reducer: {
-            RecordListReducer()
+        LibraryView(store: Store(initialState: LibraryReducer.State(), reducer: {
+            LibraryReducer()
         }))
     }
 }

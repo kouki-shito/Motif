@@ -1,5 +1,5 @@
 //
-//  RecordListReducer.swift
+//  LibraryReducer.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/14.
@@ -11,7 +11,7 @@ import SwiftUI
 import SQLiteData
 
 @Reducer
-struct RecordListReducer {
+struct LibraryReducer {
     @ObservableState
     struct State: Equatable {
         var selectedTag: TagSelection = .all
