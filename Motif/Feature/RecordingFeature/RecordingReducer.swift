@@ -67,6 +67,7 @@ struct RecordingReducer {
                                 await send(.internal(.updateRecordingSample(sample)))
                             }
                         } catch {
+                            //TODO: show allert + dismiss
                             print(error)
                         }
                     }

@@ -30,7 +30,7 @@ extension DateFormatter {
     static let recordTitle: DateFormatter = {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.dateFormat = "yyyy-MM-dd-hh"
+        formatter.dateFormat = "yyyyMMddhhmmss"
         return formatter
     }()
 }

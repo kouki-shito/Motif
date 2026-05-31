@@ -44,7 +44,10 @@ extension RecorderClient: DependencyKey {
                             await session.deleteSession()
                         }
                     @unknown default:
-                        fatalError()
+                        Task {
+                            guard await session.recorder?.id == id else { return }
+                            await session.deleteSession()
+                        }
                     }
                 }
                 return (stream, id)
@@ -138,7 +141,6 @@ private final actor Recorder: Sendable {
     
     func start() async throws {
         guard await AVAudioApplication.requestRecordPermission() else { throw RecorderExternalError.permissionDenied }
-        print(url.path)
         guard !FileManager.default.fileExists(atPath: url.path) else { throw RecorderExternalError.alreadyFileExists }
         initialize()
         do {
