@@ -19,8 +19,11 @@ struct MotifApp: App {
     }
     var body: some Scene {
         WindowGroup {
-            LibraryView(store: Store(initialState: LibraryReducer.State(), reducer: {
-                LibraryReducer()
+//            LibraryView(store: Store(initialState: LibraryReducer.State(), reducer: {
+//                LibraryReducer()
+//            }))
+            RecordingView(store: Store(initialState: RecordingReducer.State(), reducer: {
+                RecordingReducer()
             }))
         }
     }

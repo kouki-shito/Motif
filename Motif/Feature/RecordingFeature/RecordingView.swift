@@ -11,65 +11,62 @@ import SQLiteData
 
 struct RecordingView: View {
     
+    @Environment(\.dismiss) var dismiss
     @Bindable var store: StoreOf<RecordingReducer>
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text("新しいボイスメモ")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundStyle(.primary)
-                    
-                    tagChips()
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top, 28)
-                .padding(.horizontal, 20)
-                
-                Spacer()
-                
-                VStack(spacing: 64) {
-                    RecordingWaveformView()
-                        .frame(height: 160)
-                        .padding(.horizontal, 20)
-                    
-                    VStack(spacing: 8) {
-                        Text("00:01:28")
-                            .font(.system(size: 32))
-                            .monospaced()
-                            .monospacedDigit()
-                            .foregroundStyle(.primary)
-                        
-                        HStack(spacing: 8) {
-                            Circle()
-                                .fill(Color.recordingRed)
-                                .frame(width: 8, height: 8)
-                            Text("録音中...")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(Color.recordingRed)
+            ZStack {
+                Color(.baseWhite)
+                    .ignoresSafeArea()
+                VStack(spacing: 0) {
+                    VStack(alignment: .leading, spacing: 16) {
+                        TextField("タイトルを記入...", text: $store.recordTitle)
+                            .font(.system(size: 24, weight: .bold))
+                            .foregroundStyle(.textBlack)
+                        tagChips()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.top, 28)
+                    .padding(.horizontal, 20)
+                    Spacer()
+                    VStack(spacing: 64) {
+                        RecordingWaveView(barHeights: store.barHeights)
+                            .frame(height: 160)
+                            .padding(.horizontal, 20)
+                        VStack(spacing: 8) {
+                            Text(store.currentTime.timeToString(formatter: .defaultFormatter))
+                                .font(.system(size: 32))
+                                .monospaced()
+                                .monospacedDigit()
+                                .foregroundStyle(store.recordingStatus == .idle ? .inactiveGray : .textBlack)
                         }
                     }
+                    Spacer()
+                    controls()
+                        .padding(.horizontal, 34)
+                        .padding(.bottom, 30)
                 }
-                
-                Spacer()
-                
-                controls()
-                    .padding(.horizontal, 34)
-                    .padding(.bottom, 30)
             }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
-                        
+                        store.send(.view(.cancelButtonTapped))
                     } label: {
                         Image(systemName: "xmark")
                             .resizable()
                             .frame(width: 16, height: 16)
                             .fontWeight(.semibold)
                     }
-                    .tint(.primary)
+                    .tint(.textBlack)
                 }
+            }
+            .onAppear {
+                store.send(.view(.viewAppear))
+            }
+            .onChange(of: store.isDismissed) { _, bool in
+                guard bool else { return }
+                dismiss()
             }
         }
     }
@@ -86,7 +83,8 @@ struct RecordingView: View {
                     .font(.system(size: 12, weight: .semibold))
                     .padding(.horizontal, 8)
                     .frame(height: 32)
-                    .background(Color(.systemGray6), in: Capsule())
+                    .tint(.primaryBlue)
+                    .background(.baseGray, in: Capsule())
             }
         }
     }
@@ -94,32 +92,49 @@ struct RecordingView: View {
     @ViewBuilder
     private func controls() -> some View {
         HStack(alignment: .center) {
-            RecordingControlButton(
-                title: "マーク",
-                systemImage: "flag.fill"
-            ) {}
+            Spacer()
+            Button {
+                
+            } label: {
+                Image(systemName: "flag.fill")
+                    .font(.system(size: 16))
+                    .fontWeight(.semibold)
+                    .padding(16)
+            }
+            .tint(.textBlack)
+            .background(.baseGray)
+            .clipShape(Circle())
+            .disabled(store.recordingStatus == .idle)
+            Spacer()
+            
+            Button {
+                store.send(.view(.stopButtonTapped))
+            } label: {
+                Image(systemName: "stop.fill")
+                    .font(.system(size: 24, weight: .bold))
+                    .frame(width: 68, height: 68)
+                
+            }
+            .tint(.white)
+            .background(store.recordingStatus == .idle ? .baseGray : .dangerRed)
+            .clipShape(Circle())
+            .disabled(store.recordingStatus == .idle)
             
             Spacer()
             
             Button {
-                
+                store.send(.view(.pauseAndResumeButtonTapped))
             } label: {
-                Image(systemName: "stop.fill")
-                    .font(.system(size: 24, weight: .bold))
-                    .foregroundStyle(.white)
-                    .frame(width: 68, height: 68)
-                    .background(Color.recordingRed, in: Circle())
-                    .shadow(color: Color.recordingRed.opacity(0.18), radius: 18, y: 8)
+                Image(systemName: store.recordingStatus == .pausing ?  "play.fill" : "pause.fill")
+                    .font(.system(size: 16))
+                    .fontWeight(.semibold)
+                    .padding(16)
             }
-            
+            .tint(.textBlack)
+            .background(.baseGray)
+            .clipShape(Circle())
+            .disabled(store.recordingStatus == .idle)
             Spacer()
-            
-            RecordingControlButton(
-                title: "一時停止",
-                systemImage: "pause.fill"
-            ) {
-                
-            }
         }
     }
 }
@@ -135,77 +150,11 @@ private struct RecordingTagChip: View {
                 .font(.system(size: 8, weight: .bold))
         }
         .font(.system(size: 12, weight: .semibold))
-        .foregroundStyle(.secondary)
+        .foregroundStyle(.subGray)
         .padding(.horizontal, 10)
         .frame(height: 28)
-        .background(Color(.systemGray6), in: Capsule())
+        .background(.inactiveGray, in: Capsule())
     }
-}
-
-private struct RecordingWaveformView: View {
-    
-    private let levels: [CGFloat] = [
-        0.28, 0.50, 0.38, 0.66, 0.26, 0.74, 0.34, 0.58,
-        0.82, 0.42, 0.64, 0.32, 0.90, 0.46, 0.70, 0.54,
-        0.78, 0.36, 0.62, 0.88, 0.48, 0.74, 0.56, 0.34,
-        0.66, 0.52, 0.40, 0.58, 0.30, 0.44, 0.34, 0.48,
-        0.26, 0.38, 0.30, 0.42, 0.24, 0.34, 0.28, 0.36
-    ]
-    
-    var body: some View {
-        GeometryReader { proxy in
-            let barWidth: CGFloat = 3
-            let spacing: CGFloat = 4
-            let maxHeight = proxy.size.height
-            
-            HStack(alignment: .center, spacing: spacing) {
-                ForEach(levels.indices, id: \.self) { index in
-                    Capsule()
-                        .fill(index < 24 ? Color.recordAccent : Color(.systemGray4))
-                        .frame(
-                            width: barWidth,
-                            height: max(10, maxHeight * levels[index])
-                        )
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-        }
-        .accessibilityHidden(true)
-    }
-}
-
-private struct RecordingControlButton: View {
-    
-    let title: String
-    let systemImage: String
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 8) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 19, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .frame(width: 42, height: 42)
-                    .background(Color(.systemGray6), in: Circle())
-                    .overlay {
-                        Circle()
-                            .stroke(Color(.systemGray4), lineWidth: 1)
-                    }
-                
-                Text(title)
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(.primary)
-                    .lineLimit(1)
-            }
-            .frame(width: 70)
-        }
-    }
-}
-
-private extension Color {
-    static let recordAccent = Color(red: 0.43, green: 0.30, blue: 0.89)
-    static let recordingRed = Color(red: 0.94, green: 0.22, blue: 0.24)
 }
 
 #Preview {

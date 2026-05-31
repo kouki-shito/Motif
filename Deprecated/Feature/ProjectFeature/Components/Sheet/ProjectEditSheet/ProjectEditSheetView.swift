@@ -79,7 +79,7 @@ struct ProjectEditSheetView: View {
                         Image(systemName: "checkmark")
                             .resizable()
                             .frame(width: 16, height: 16)
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.baseWhite)
                             .fontWeight(.semibold)
                     }
                     .tint(.green)
