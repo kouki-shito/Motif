@@ -14,6 +14,7 @@ import SQLiteData
 struct LibraryReducer {
     @ObservableState
     struct State: Equatable {
+        @Presents var recordingReducerState: RecordingReducer.State?
         var selectedTag: TagSelection = .all
         var selectedFolder: FolderSelection = .all
         var searchText: String = ""
@@ -21,6 +22,7 @@ struct LibraryReducer {
         @FetchAll var tags: [Tag]
         @FetchAll(
             Record
+                .order { $0.createdAt.desc() }
                 .group(by: \.id)
                 .leftJoin(RecordJunctionTag.all) { $0.id.eq($1.record_id) }
                 .leftJoin(Tag.all) { $1.tag_id.eq($2.id) }
@@ -38,7 +40,9 @@ struct LibraryReducer {
         case `internal`(internalAction)
         case delegate(delegateAction)
         case binding(BindingAction<State>)
+        case recordingReducerAction(PresentationAction<RecordingReducer.Action>)
         enum ViewAction: Equatable {
+            case recordButtonTapped
         }
         enum internalAction: Equatable {}
         enum delegateAction: Equatable {}
@@ -49,27 +53,18 @@ struct LibraryReducer {
             switch action {
             case .binding:
                 return .none
+            case .view(let action):
+                switch action {
+                case .recordButtonTapped:
+                    state.recordingReducerState = RecordingReducer.State()
+                    return .none
+                }
+            case .recordingReducerAction:
+                return .none
             }
+        }
+        .ifLet(\.$recordingReducerState, action: \.recordingReducerAction) {
+            RecordingReducer()
         }
     }
 }
-
-//#sql(
-//"""
-//SELECT 
-//\(Record.all),
-//COALESCE(
-//json_group_array(
-//  json_object(
-//    'id', \(Tag.id)
-//    'name' \(Tag.name)
-//  )  
-//)            
-//'[]'
-//) AS \(Tag.self)
-//FROM \(Record.self)
-//LEFT JOIN \(RecordJunctionTag.self) ON \(Record.id) = \(RecordJunctionTag.record_id)
-//LEFT JOIN \(Tag.self) ON \(RecordJunctionTag.tag_id) = \(Tag.id)
-//GROUP BY \(Record.id)
-//"""
-//)

@@ -26,6 +26,7 @@ struct RecordingReducer {
         var barHeights: [CGFloat] = [CGFloat](repeating: 5.0, count: 200)
         var didAppear: Bool = false
         var isDismissed: Bool = false
+        let recordID: UUID = UUID()
     }
     enum Action: BindableAction {
         case view(ViewAction)
@@ -47,6 +48,7 @@ struct RecordingReducer {
     }
     
     @Dependency(\.recorderClient) private var recorder: RecorderClient
+    @Dependency(\.databaseClient) private var db: DatabaseClient
     
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -59,10 +61,10 @@ struct RecordingReducer {
                 case .viewAppear:
                     guard !state.didAppear else { return .none }
                     state.didAppear = true
-                    return .run { send in
+                    return .run { [id = state.recordID] send in
                         do {
-                            let (stream, _) = try await recorder.start()
-                            await send(.internal(.updateRecordingStatus(try recorder.status())))
+                            let stream = try await recorder.start(id)
+                            await send(.internal(.updateRecordingStatus(try recorder.getStatus())))
                             for try await sample in stream {
                                 await send(.internal(.updateRecordingSample(sample)))
                             }
@@ -72,20 +74,28 @@ struct RecordingReducer {
                         }
                     }
                 case .stopButtonTapped:
-                    return .run { send in
-                        try await recorder.stop()
-                        await send(.internal(.updateRecordingStatus(try recorder.status())))
+                    return .run { [id = state.recordID, title = state.recordTitle] send in
+                        do {
+                            try await recorder.stop()
+                            await send(.internal(.updateRecordingStatus(try recorder.getStatus())))
+                            let duration = try await recorder.getDuration(id)
+                            let record = Record(id: id, title: title, duration: duration, folder_id: nil)
+                            try await db.insertRecord(record: record)
+                        } catch {
+                            //TODO: show allert + dismiss
+                            print(error)
+                        }
                         await send(.internal(.dismiss))
                     }
                 case .pauseAndResumeButtonTapped:
                     return .run { send in
                         try await recorder.togglePauseAndResume()
-                        await send(.internal(.updateRecordingStatus(try recorder.status())))
+                        await send(.internal(.updateRecordingStatus(try recorder.getStatus())))
                     }
                 case .cancelButtonTapped:
                     return .run { send in
                         try await recorder.cancel()
-                        await send(.internal(.updateRecordingStatus(try recorder.status())))
+                        await send(.internal(.updateRecordingStatus(try recorder.getStatus())))
                         await send(.internal(.dismiss))
                     }
                 }

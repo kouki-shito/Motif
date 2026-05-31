@@ -48,6 +48,7 @@ struct RecordingView: View {
                         .padding(.bottom, 30)
                 }
             }
+            .navigationBarBackButtonHidden()
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {

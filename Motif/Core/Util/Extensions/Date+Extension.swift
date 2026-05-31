@@ -40,7 +40,7 @@ extension DateComponentsFormatter {
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .positional
         formatter.zeroFormattingBehavior = .pad
-        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.allowedUnits = [.minute, .second]
         return formatter
     }()
 }

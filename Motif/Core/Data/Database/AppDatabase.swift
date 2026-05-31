@@ -85,25 +85,25 @@ func appDatabase() throws -> any DatabaseWriter {
             let tag2_id = UUID()
             Tag(id: tag1_id, name: "Aメロ")
             Tag(id: tag2_id, name: "Bメロ")
-            for i in 1...10 {
-                let id = UUID()
-                Record(id: id, title: "新規メモ\(i)-タグ無し", duration: 120.5, folder_id: folder1_id)
-            }
-            for i in 1...10 {
-                let id = UUID()
-                Record(id: id, title: "新規メモ\(i)-タグあり", duration: 300.5, folder_id: folder2_id)
-                if i % 2 == 0 {
-                    RecordJunctionTag(record_id: id, tag_id: tag2_id)
-                } else {
-                    RecordJunctionTag(record_id: id, tag_id: tag1_id)
-                }
-            }
-            for i in 1...10 {
-                let id = UUID()
-                Record(id: id, title: "新規メモ\(i)-マルチタグ", duration: 300, folder_id: folder3_id)
-                RecordJunctionTag(record_id: id, tag_id: tag1_id)
-                RecordJunctionTag(record_id: id, tag_id: tag2_id)
-            }
+//            for i in 1...10 {
+//                let id = UUID()
+//                Record(id: id, title: "新規メモ\(i)-タグ無し", duration: 120.5, folder_id: folder1_id)
+//            }
+//            for i in 1...10 {
+//                let id = UUID()
+//                Record(id: id, title: "新規メモ\(i)-タグあり", duration: 300.5, folder_id: folder2_id)
+//                if i % 2 == 0 {
+//                    RecordJunctionTag(record_id: id, tag_id: tag2_id)
+//                } else {
+//                    RecordJunctionTag(record_id: id, tag_id: tag1_id)
+//                }
+//            }
+//            for i in 1...10 {
+//                let id = UUID()
+//                Record(id: id, title: "新規メモ\(i)-マルチタグ", duration: 300, folder_id: folder3_id)
+//                RecordJunctionTag(record_id: id, tag_id: tag1_id)
+//                RecordJunctionTag(record_id: id, tag_id: tag2_id)
+//            }
         }
         #endif
     }

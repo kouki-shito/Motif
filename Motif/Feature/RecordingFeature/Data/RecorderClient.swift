@@ -13,11 +13,12 @@ import AVFoundation
 @DependencyClient
 struct RecorderClient: Sendable {
     var requestRecordPermission: @Sendable () async throws -> Bool
-    var start: @Sendable () async throws -> (AsyncThrowingStream<RecordingSample, any Error>, UUID)
+    var start: @Sendable (_ id: UUID) async throws -> AsyncThrowingStream<RecordingSample, any Error>
     var stop: @Sendable () async throws -> Void
     var togglePauseAndResume: @Sendable () async throws -> Void
     var cancel: @Sendable () async throws -> Void
-    var status: @Sendable () async throws -> RecordingStatus
+    var getStatus: @Sendable () async throws -> RecordingStatus
+    var getDuration: @Sendable (_ id: UUID) async throws -> TimeInterval
 }
 
 extension RecorderClient: DependencyKey {
@@ -26,10 +27,9 @@ extension RecorderClient: DependencyKey {
         return Self(
             requestRecordPermission: {
                 return await AVAudioApplication.requestRecordPermission()
-            }, start: {
+            }, start: { id in
                 guard await AVAudioApplication.requestRecordPermission() else { throw RecorderExternalError.permissionDenied }
                 let (stream, continuation) = AsyncThrowingStream.makeStream(of: RecordingSample.self, bufferingPolicy: .bufferingNewest(1))
-                let id = UUID()
                 try await session.startSession(continuation: continuation, id: id)
                 continuation.onTermination = { ter in
                     switch ter {
@@ -50,15 +50,17 @@ extension RecorderClient: DependencyKey {
                         }
                     }
                 }
-                return (stream, id)
+                return stream
             }, stop: {
                 await session.deleteSession()
             }, togglePauseAndResume: {
                 try await session.recorder?.togglePauseAndResume()
             }, cancel: {
                 await session.cancelSession()
-            }, status: {
+            }, getStatus: {
                 await session.recorder?.status ?? .idle
+            }, getDuration: { id in
+                try await session.getDuration(id: id)
             }
         )
     }
@@ -102,6 +104,13 @@ private final actor RecorderSession {
     func cancelSession() async {
         await recorder?.cancel()
         recorder = nil
+    }
+    
+    func getDuration(id: UUID) async throws -> TimeInterval {
+        let url = try getFileURL(id: id)
+        let asset = AVURLAsset(url: url)
+        let duration = try await asset.load(.duration)
+        return duration.seconds
     }
     
     private func getFileURL(id: UUID) throws -> URL {

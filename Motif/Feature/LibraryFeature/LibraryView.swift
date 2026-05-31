@@ -32,12 +32,15 @@ struct LibraryView: View {
                 ToolbarSpacer(.fixed, placement: .bottomBar)
                 ToolbarItem(placement: .bottomBar) {
                     Button {
-                        
+                        store.send(.view(.recordButtonTapped))
                     } label: {
                         Circle()
                             .foregroundStyle(.dangerRed)
                     }
                 }
+            }
+            .navigationDestination(item: $store.scope(state: \.recordingReducerState, action: \.recordingReducerAction)) { store in
+                RecordingView(store: store)
             }
         }
     }
