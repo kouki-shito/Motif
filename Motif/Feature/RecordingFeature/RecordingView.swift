@@ -24,7 +24,7 @@ struct RecordingView: View {
                         TextField("タイトルを記入...", text: $store.recordTitle)
                             .font(.system(size: 24, weight: .bold))
                             .foregroundStyle(.textBlack)
-                        tagChips()
+                        tags()
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 28)
@@ -49,6 +49,10 @@ struct RecordingView: View {
                 }
             }
             .navigationBarBackButtonHidden()
+            .sheet(item: $store.scope(state: \.$editTagReducerState, action: \.editTagReducerAction), content: { store in
+                EditTagSheetView(store: store)
+                    .presentationBackground(.white)
+            })
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
@@ -70,14 +74,31 @@ struct RecordingView: View {
                 dismiss()
             }
         }
+        
     }
     
     @ViewBuilder
-    private func tagChips() -> some View {
+    private func tags() -> some View {
         HStack(spacing: 8) {
-            
+            ForEach(store.selectedTags, id: \.id) { tag in
+                HStack(spacing: 4) {
+                    Text(tag.name)
+                        .foregroundStyle(.textBlack)
+                    Button {
+                        store.send(.view(.deleteTagButtonTapped(tag.id)))
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(.subGray)
+                    }
+                }
+                .font(.system(size: 12, weight: .semibold))
+                .padding(.horizontal, 10)
+                .frame(height: 28)
+                .background(.baseGray, in: Capsule())
+            }
             Button {
-                
+                store.send(.view(.insertTagButtonTapped))
             } label: {
                 Label("タグを追加", systemImage: "plus")
                     .labelStyle(.titleAndIcon)
@@ -95,11 +116,12 @@ struct RecordingView: View {
         HStack(alignment: .center) {
             Spacer()
             Button {
-                
+                store.send(.view(.bookmarkButtonTapped))
             } label: {
-                Image(systemName: "flag.fill")
+                Image(systemName: store.isFavorite ? "heart.fill" : "heart")
                     .font(.system(size: 16))
                     .fontWeight(.semibold)
+                    .foregroundStyle(store.isFavorite ? .dangerRed: .textBlack)
                     .padding(16)
             }
             .tint(.textBlack)
@@ -145,16 +167,7 @@ private struct RecordingTagChip: View {
     let title: String
     
     var body: some View {
-        HStack(spacing: 4) {
-            Text(title)
-            Image(systemName: "xmark")
-                .font(.system(size: 8, weight: .bold))
-        }
-        .font(.system(size: 12, weight: .semibold))
-        .foregroundStyle(.subGray)
-        .padding(.horizontal, 10)
-        .frame(height: 28)
-        .background(.inactiveGray, in: Capsule())
+        
     }
 }
 

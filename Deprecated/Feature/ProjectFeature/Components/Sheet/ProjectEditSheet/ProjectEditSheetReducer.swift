@@ -45,17 +45,17 @@ struct ProjectEditSheetReducer {
     }
     enum Action: BindableAction {
         case view(ViewAction)
-        case `internal`(internalAction)
-        case delegate(delegateAction)
+        case `internal`(InternalAction)
+        case delegate(DelegateAction)
         case binding(BindingAction<State>)
         enum ViewAction: Equatable {
             case confirmButtonTapped
             case addGenreButtonTapped
         }
-        enum internalAction: Equatable {
+        enum InternalAction: Equatable {
             case dismiss
         }
-        enum delegateAction: Equatable {}
+        enum DelegateAction: Equatable {}
     }
     var body: some Reducer<State, Action> {
         BindingReducer()

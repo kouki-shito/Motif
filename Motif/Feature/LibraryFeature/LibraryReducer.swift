@@ -37,15 +37,15 @@ struct LibraryReducer {
     }
     enum Action: BindableAction {
         case view(ViewAction)
-        case `internal`(internalAction)
-        case delegate(delegateAction)
+        case `internal`(InternalAction)
+        case delegate(DelegateAction)
         case binding(BindingAction<State>)
         case recordingReducerAction(PresentationAction<RecordingReducer.Action>)
         enum ViewAction: Equatable {
             case recordButtonTapped
         }
-        enum internalAction: Equatable {}
-        enum delegateAction: Equatable {}
+        enum InternalAction: Equatable {}
+        enum DelegateAction: Equatable {}
     }
     var body: some Reducer<State, Action> {
         BindingReducer()

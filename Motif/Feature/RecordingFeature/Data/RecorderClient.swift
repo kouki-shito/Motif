@@ -153,8 +153,9 @@ private final actor Recorder: Sendable {
         guard !FileManager.default.fileExists(atPath: url.path) else { throw RecorderExternalError.alreadyFileExists }
         initialize()
         do {
-            try AVAudioSession.sharedInstance().setCategory(.record, mode: .default)
-            try AVAudioSession.sharedInstance().setActive(true)
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.record, mode: .default)
+            try session.setActive(true)
             try prepareEngine()
             try engine.start()
             recorder.record()

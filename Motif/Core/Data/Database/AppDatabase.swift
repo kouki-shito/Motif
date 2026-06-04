@@ -37,9 +37,10 @@ func appDatabase() throws -> any DatabaseWriter {
             "createdAt" TEXT NOT NULL,
             "title" TEXT NOT NULL,
             "duration" REAL NOT NULL,
+            "isFavorite" INTEGER NOT NULL DEFAULT 0,
             "folder_id" TEXT,
             PRIMARY KEY("id"),
-            FOREIGN KEY("folder_id") REFERENCES "folders"("id")
+            FOREIGN KEY("folder_id") REFERENCES "folders"("id") ON DELETE SET NULL
         )STRICT        
         """
         ).execute(db)
@@ -67,8 +68,8 @@ func appDatabase() throws -> any DatabaseWriter {
             "record_id" TEXT NOT NULL,
             "tag_id" TEXT NOT NULL,
             PRIMARY KEY("record_id","tag_id"),
-            FOREIGN KEY("record_id") REFERENCES "records"("id"),
-            FOREIGN KEY("tag_id") REFERENCES "tags"("id")
+            FOREIGN KEY("record_id") REFERENCES "records"("id") ON DELETE CASCADE,
+            FOREIGN KEY("tag_id") REFERENCES "tags"("id") ON DELETE CASCADE
         )STRICT        
         """
         ).execute(db)

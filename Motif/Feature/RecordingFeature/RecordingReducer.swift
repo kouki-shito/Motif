@@ -26,25 +26,37 @@ struct RecordingReducer {
         var barHeights: [CGFloat] = [CGFloat](repeating: 5.0, count: 200)
         var didAppear: Bool = false
         var isDismissed: Bool = false
+        var isFavorite = false
         let recordID: UUID = UUID()
+        var selectedTagIDs: Set<Tag.ID> = []
+        @FetchAll var selectedTags: [Tag]
+        @Presents var editTagReducerState: EditTagReducer.State?
+        
+        init() {
+            _selectedTags = FetchAll(Tag.where { selectedTagIDs.contains($0.id) })
+        }
     }
     enum Action: BindableAction {
         case view(ViewAction)
-        case `internal`(internalAction)
-        case delegate(delegateAction)
+        case `internal`(InternalAction)
+        case delegate(DelegateAction)
         case binding(BindingAction<State>)
+        case editTagReducerAction(PresentationAction<EditTagReducer.Action>)
         enum ViewAction: Equatable {
             case viewAppear
             case stopButtonTapped
             case pauseAndResumeButtonTapped
             case cancelButtonTapped
+            case insertTagButtonTapped
+            case deleteTagButtonTapped(Tag.ID)
+            case bookmarkButtonTapped
         }
-        enum internalAction: Equatable {
+        enum InternalAction: Equatable {
             case updateRecordingStatus(RecordingStatus)
             case updateRecordingSample(RecordingSample)
             case dismiss
         }
-        enum delegateAction: Equatable {}
+        enum DelegateAction: Equatable {}
     }
     
     @Dependency(\.recorderClient) private var recorder: RecorderClient
@@ -71,16 +83,18 @@ struct RecordingReducer {
                         } catch {
                             //TODO: show allert + dismiss
                             print(error)
+                            await send(.internal(.dismiss))
                         }
                     }
                 case .stopButtonTapped:
-                    return .run { [id = state.recordID, title = state.recordTitle] send in
+                    return .run { [id = state.recordID, title = state.recordTitle, isFav = state.isFavorite, tagIDs = state.selectedTagIDs] send in
                         do {
                             try await recorder.stop()
                             await send(.internal(.updateRecordingStatus(try recorder.getStatus())))
                             let duration = try await recorder.getDuration(id)
-                            let record = Record(id: id, title: title, duration: duration, folder_id: nil)
+                            let record = Record(id: id, title: title, duration: duration, isFavorite: isFav)
                             try await db.insertRecord(record: record)
+                            try await db.insertRecordTag(recordID: id, tagIDs: tagIDs)
                         } catch {
                             //TODO: show allert + dismiss
                             print(error)
@@ -98,6 +112,17 @@ struct RecordingReducer {
                         await send(.internal(.updateRecordingStatus(try recorder.getStatus())))
                         await send(.internal(.dismiss))
                     }
+                case .insertTagButtonTapped:
+                    state.editTagReducerState = EditTagReducer.State(selectingTags: state.selectedTagIDs)
+                    return .none
+                case .deleteTagButtonTapped(let id):
+                    state.selectedTagIDs.remove(id)
+                    return .run { [tags = state.$selectedTags, ids = state.selectedTagIDs] send in
+                        try await tags.load(Tag.where { ids.contains($0.id) })
+                    }
+                case .bookmarkButtonTapped:
+                    state.isFavorite.toggle()
+                    return .none
                 }
             case .internal(let action):
                 switch action {
@@ -113,7 +138,29 @@ struct RecordingReducer {
                     state.isDismissed = true
                     return .none
                 }
+            case .editTagReducerAction(let action):
+                switch action {
+                case .dismiss:
+                    state.editTagReducerState = nil
+                    return .none
+                case .presented(let action):
+                    switch action {
+                    case .delegate(let action):
+                        switch action {
+                        case .selectingTagsConfirmed(let tagIDs):
+                            state.selectedTagIDs = tagIDs
+                            return .run { [tags = state.$selectedTags, ids = state.selectedTagIDs] send in
+                                try await tags.load(Tag.where { ids.contains($0.id) })
+                            }
+                        }
+                    default:
+                        return .none
+                    }
+                }
             }
+        }
+        .ifLet(\.$editTagReducerState, action: \.editTagReducerAction) {
+            EditTagReducer()
         }
     }
 }
