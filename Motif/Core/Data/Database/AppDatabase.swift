@@ -89,8 +89,10 @@ func appDatabase() throws -> any DatabaseWriter {
         }
         #endif
     }
-    let recover = DatabaseRecoveryManager(database: database)
-    recover.autoRecoveryRecords()
+    Task {
+        let recover = DatabaseRecoveryManager(database: database)
+        await recover.autoRecoveryRecords()
+    }
     try migrator.migrate(database)
     return database
 }
