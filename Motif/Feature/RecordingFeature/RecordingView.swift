@@ -53,6 +53,7 @@ struct RecordingView: View {
                 EditTagSheetView(store: store)
                     .presentationBackground(.white)
             })
+            .alert($store.scope(state: \.alert, action: \.alert))
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {

@@ -115,7 +115,7 @@ private final actor RecorderSession {
     
     private func getFileURL(id: UUID) throws -> URL {
         let documentDir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let recordingDir = documentDir.appending(component: "Recording", directoryHint: .isDirectory)
+        let recordingDir = documentDir.appending(component: "Records", directoryHint: .isDirectory)
         try FileManager.default.createDirectory(at: recordingDir, withIntermediateDirectories: true)
         let fileURL = recordingDir.appending(component: "\(id.uuidString).m4a", directoryHint: .notDirectory)
         return fileURL
