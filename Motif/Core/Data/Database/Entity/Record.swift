@@ -14,13 +14,15 @@ nonisolated struct Record: Identifiable, Equatable, Hashable {
     let createdAt: Date
     let title: String
     let duration: TimeInterval
+    let isFavorite: Bool
     let folder_id: Folder.ID?
     
-    init(id: UUID = UUID(), createdAt: Date = Date(), title: String, duration: TimeInterval, folder_id: Folder.ID?) {
+    init(id: UUID = UUID(), createdAt: Date = Date(), title: String, duration: TimeInterval, isFavorite: Bool = false, folder_id: Folder.ID? = nil) {
         self.id = id
         self.createdAt = createdAt
         self.title = title
         self.duration = duration
+        self.isFavorite = isFavorite
         self.folder_id = folder_id
     }
 }

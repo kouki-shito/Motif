@@ -37,9 +37,10 @@ func appDatabase() throws -> any DatabaseWriter {
             "createdAt" TEXT NOT NULL,
             "title" TEXT NOT NULL,
             "duration" REAL NOT NULL,
+            "isFavorite" INTEGER NOT NULL DEFAULT 0,
             "folder_id" TEXT,
             PRIMARY KEY("id"),
-            FOREIGN KEY("folder_id") REFERENCES "folders"("id")
+            FOREIGN KEY("folder_id") REFERENCES "folders"("id") ON DELETE SET NULL
         )STRICT        
         """
         ).execute(db)
@@ -67,8 +68,8 @@ func appDatabase() throws -> any DatabaseWriter {
             "record_id" TEXT NOT NULL,
             "tag_id" TEXT NOT NULL,
             PRIMARY KEY("record_id","tag_id"),
-            FOREIGN KEY("record_id") REFERENCES "records"("id"),
-            FOREIGN KEY("tag_id") REFERENCES "tags"("id")
+            FOREIGN KEY("record_id") REFERENCES "records"("id") ON DELETE CASCADE,
+            FOREIGN KEY("tag_id") REFERENCES "tags"("id") ON DELETE CASCADE
         )STRICT        
         """
         ).execute(db)
@@ -85,27 +86,12 @@ func appDatabase() throws -> any DatabaseWriter {
             let tag2_id = UUID()
             Tag(id: tag1_id, name: "Aメロ")
             Tag(id: tag2_id, name: "Bメロ")
-            for i in 1...10 {
-                let id = UUID()
-                Record(id: id, title: "新規メモ\(i)-タグ無し", duration: 120.5, folder_id: folder1_id)
-            }
-            for i in 1...10 {
-                let id = UUID()
-                Record(id: id, title: "新規メモ\(i)-タグあり", duration: 300.5, folder_id: folder2_id)
-                if i % 2 == 0 {
-                    RecordJunctionTag(record_id: id, tag_id: tag2_id)
-                } else {
-                    RecordJunctionTag(record_id: id, tag_id: tag1_id)
-                }
-            }
-            for i in 1...10 {
-                let id = UUID()
-                Record(id: id, title: "新規メモ\(i)-マルチタグ", duration: 300, folder_id: folder3_id)
-                RecordJunctionTag(record_id: id, tag_id: tag1_id)
-                RecordJunctionTag(record_id: id, tag_id: tag2_id)
-            }
         }
         #endif
+    }
+    Task {
+        let recover = DatabaseRecoveryManager(database: database)
+        await recover.autoRecoveryRecords()
     }
     try migrator.migrate(database)
     return database

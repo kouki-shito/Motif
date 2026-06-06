@@ -1,5 +1,5 @@
 //
-//  RecordListReducer.swift
+//  LibraryReducer.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/14.
@@ -11,9 +11,10 @@ import SwiftUI
 import SQLiteData
 
 @Reducer
-struct RecordListReducer {
+struct LibraryReducer {
     @ObservableState
     struct State: Equatable {
+        @Presents var recordingReducerState: RecordingReducer.State?
         var selectedTag: TagSelection = .all
         var selectedFolder: FolderSelection = .all
         var searchText: String = ""
@@ -21,6 +22,7 @@ struct RecordListReducer {
         @FetchAll var tags: [Tag]
         @FetchAll(
             Record
+                .order { $0.createdAt.desc() }
                 .group(by: \.id)
                 .leftJoin(RecordJunctionTag.all) { $0.id.eq($1.record_id) }
                 .leftJoin(Tag.all) { $1.tag_id.eq($2.id) }
@@ -35,13 +37,15 @@ struct RecordListReducer {
     }
     enum Action: BindableAction {
         case view(ViewAction)
-        case `internal`(internalAction)
-        case delegate(delegateAction)
+        case `internal`(InternalAction)
+        case delegate(DelegateAction)
         case binding(BindingAction<State>)
+        case recordingReducerAction(PresentationAction<RecordingReducer.Action>)
         enum ViewAction: Equatable {
+            case recordButtonTapped
         }
-        enum internalAction: Equatable {}
-        enum delegateAction: Equatable {}
+        enum InternalAction: Equatable {}
+        enum DelegateAction: Equatable {}
     }
     var body: some Reducer<State, Action> {
         BindingReducer()
@@ -49,27 +53,18 @@ struct RecordListReducer {
             switch action {
             case .binding:
                 return .none
+            case .view(let action):
+                switch action {
+                case .recordButtonTapped:
+                    state.recordingReducerState = RecordingReducer.State()
+                    return .none
+                }
+            case .recordingReducerAction:
+                return .none
             }
+        }
+        .ifLet(\.$recordingReducerState, action: \.recordingReducerAction) {
+            RecordingReducer()
         }
     }
 }
-
-//#sql(
-//"""
-//SELECT 
-//\(Record.all),
-//COALESCE(
-//json_group_array(
-//  json_object(
-//    'id', \(Tag.id)
-//    'name' \(Tag.name)
-//  )  
-//)            
-//'[]'
-//) AS \(Tag.self)
-//FROM \(Record.self)
-//LEFT JOIN \(RecordJunctionTag.self) ON \(Record.id) = \(RecordJunctionTag.record_id)
-//LEFT JOIN \(Tag.self) ON \(RecordJunctionTag.tag_id) = \(Tag.id)
-//GROUP BY \(Record.id)
-//"""
-//)

@@ -1,5 +1,5 @@
 //
-//  RecordListView.swift
+//  LibraryView.swift
 //  Motif
 //
 //  Created by 市東 on 2026/05/14.
@@ -9,14 +9,14 @@ import SwiftUI
 import ComposableArchitecture
 import SQLiteData
 
-struct RecordListView: View {
+struct LibraryView: View {
     
-    @Bindable var store: StoreOf<RecordListReducer>
+    @Bindable var store: StoreOf<LibraryReducer>
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .bottom) {
-                Color(.systemGroupedBackground)
+                Color(.baseGray)
                     .ignoresSafeArea()
                 
                 VStack(alignment: .leading, spacing: 16) {
@@ -32,12 +32,16 @@ struct RecordListView: View {
                 ToolbarSpacer(.fixed, placement: .bottomBar)
                 ToolbarItem(placement: .bottomBar) {
                     Button {
-                        
+                        store.send(.view(.recordButtonTapped))
                     } label: {
                         Circle()
-                            .foregroundStyle(.red)
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(.dangerRed)
                     }
                 }
+            }
+            .navigationDestination(item: $store.scope(state: \.recordingReducerState, action: \.recordingReducerAction)) { store in
+                RecordingView(store: store)
             }
         }
     }
@@ -47,9 +51,13 @@ struct RecordListView: View {
         HStack {
             Menu {
                 Picker("folder", selection: $store.selectedFolder) {
-                    Text("すべてのメモ").tag(FolderSelection.all)
+                    Text("すべてのメモ")
+                        .foregroundStyle(.textBlack)
+                        .tag(FolderSelection.all)
                     ForEach(store.folders, id: \.id) { folder in
-                        Text(folder.name).tag(FolderSelection.folder(folder))
+                        Text(folder.name)
+                            .tag(FolderSelection.folder(folder))
+                            .foregroundStyle(.textBlack)
                     }
                 }
                 Button {
@@ -63,6 +71,7 @@ struct RecordListView: View {
                         .lineLimit(1)
                         .font(.title2)
                         .fontWeight(.bold)
+                        .foregroundStyle(.textBlack)
                     Image(systemName: "chevron.down")
                 }
                 .frame(maxWidth: 240, alignment: .leading)
@@ -77,7 +86,7 @@ struct RecordListView: View {
                     .font(.system(size: 20))
                     .frame(width: 20, height: 28)
                     .contentShape(Circle())
-                    .tint(.primary)
+                    .tint(.textBlack)
             }
             .buttonStyle(.glass)
             
@@ -95,12 +104,12 @@ struct RecordListView: View {
                 } label: {
                     Text(TagSelection.all.description)
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(store.selectedTag == .all ? .white : .primary)
+                        .foregroundStyle(store.selectedTag == .all ? .baseWhite : .textBlack)
                         .padding(.horizontal, 14)
                         .frame(height: 30)
                         .background(
                             Capsule()
-                                .fill(store.selectedTag == .all ? Color.recordAccent : Color(.white))
+                                .fill(store.selectedTag == .all ? .primaryBlue : .baseWhite)
                         )
                 }
                 ForEach(store.tags, id: \.self) { tag in
@@ -109,12 +118,12 @@ struct RecordListView: View {
                     } label: {
                         Text(tag.name)
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(store.selectedTag == .tag(tag) ? .white : .primary)
+                            .foregroundStyle(store.selectedTag == .tag(tag) ? .baseWhite : .textBlack)
                             .padding(.horizontal, 14)
                             .frame(height: 30)
                             .background(
                                 Capsule()
-                                    .fill(store.selectedTag == .tag(tag) ? Color.recordAccent : Color(.white))
+                                    .fill(store.selectedTag == .tag(tag) ? .primaryBlue : .baseWhite)
                             )
                     }
                 }
@@ -149,7 +158,7 @@ struct RecordListView: View {
                     ForEach(recordWithTags.tags, id: \.id) { tag in
                         Text(tag.name)
                             .font(.system(size: 12, weight: .semibold))
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.subGray)
                             .padding(.horizontal, 8)
                             .frame(height: 20)
                             .background(Color(.systemGray6))
@@ -158,11 +167,11 @@ struct RecordListView: View {
                 }
                 Text(recordWithTags.record.title)
                     .font(.system(size: 16, weight: .bold))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.textBlack)
                     .lineLimit(1)
                 Text(recordWithTags.record.createdAt.dateToString(formatter: .defaultFormatter))
                     .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.subGray)
             }
             Spacer()
             VStack(alignment: .center, spacing: 8) {
@@ -170,29 +179,25 @@ struct RecordListView: View {
                 } label: {
                     Image(systemName: "play.fill")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.textBlack)
                         .frame(width: 40, height: 40)
                         .clipShape(Circle())
                         .overlay(
                             Circle()
-                                .stroke(Color(.systemGray5), lineWidth: 1)
+                                .stroke(.inactiveGray, lineWidth: 1)
                         )
                 }
-                .tint(Color.recordAccent)
+                .tint(.primaryBlue)
                 Text(recordWithTags.record.duration.timeToString(formatter: .defaultFormatter))
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(.textBlack)
             }
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
-        .background(.white)
+        .background(.baseWhite)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
-}
-
-private extension Color {
-    static let recordAccent = Color(red: 0.43, green: 0.30, blue: 0.89)
 }
 
 #Preview {
@@ -201,8 +206,8 @@ private extension Color {
         $0.defaultDatabase = db
     }
     NavigationStack {
-        RecordListView(store: Store(initialState: RecordListReducer.State(), reducer: {
-            RecordListReducer()
+        LibraryView(store: Store(initialState: LibraryReducer.State(), reducer: {
+            LibraryReducer()
         }))
     }
 }

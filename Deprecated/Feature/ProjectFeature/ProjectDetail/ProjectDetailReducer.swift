@@ -48,12 +48,12 @@ struct ProjectDetailReducer {
     }
     enum Action: BindableAction {
         case view(ViewAction)
-        case `internal`(internalAction)
-        case delegate(delegateAction)
+        case `internal`(InternalAction)
+        case delegate(DelegateAction)
         case binding(BindingAction<State>)
         enum ViewAction: Equatable {}
-        enum internalAction: Equatable {}
-        enum delegateAction: Equatable {}
+        enum InternalAction: Equatable {}
+        enum DelegateAction: Equatable {}
     }
     var body: some Reducer<State, Action> {
         BindingReducer()

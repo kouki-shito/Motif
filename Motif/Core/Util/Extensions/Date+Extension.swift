@@ -26,14 +26,21 @@ extension DateFormatter {
         formatter.dateFormat = "yyyy年MM月dd日"
         return formatter
     }()
+    
+    static let recordTitle: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "yyyyMMdd_hhmmss"
+        return formatter
+    }()
 }
 
 extension DateComponentsFormatter {
     static let defaultFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
         formatter.unitsStyle = .positional
-        formatter.zeroFormattingBehavior = .dropLeading
-        formatter.allowedUnits = [.hour, .minute, .second]
+        formatter.zeroFormattingBehavior = .pad
+        formatter.allowedUnits = [.minute, .second]
         return formatter
     }()
 }
